@@ -17,10 +17,12 @@ import { jsonForms } from "@/configs/schema";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const CreateForm = () => {
   const prompt =
-    ", on the basis of description please give form in json format with form title , form subheading with having form field, form name, form placeholder name and form label, field type, field required in json format";
+  ", based on the description, please provide the form in JSON format with the following structure: formTitle, formSubHeading, formFields (an array of objects with properties: fieldName, fieldLabel, fieldType, fieldPlaceholder, fieldRequired, and fieldOptions for select and radio fields, where fieldOptions is an array of objects with value and label). Ensure that the data format is consistent as described.";
+
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const {user} = useUser()
@@ -65,7 +67,7 @@ const CreateForm = () => {
                 <DialogClose asChild>
                   <Button variant={"destructive"}>Cancel</Button>
                 </DialogClose>
-                <Button disabled={loading} onClick={() => onCreateForm()}>Create</Button>
+                <Button disabled={loading}  onClick={() => onCreateForm()}>{loading? <Loader2 className="animate-spin" /> : 'Create'}</Button>
               </div>
             </DialogDescription>
           </DialogHeader>
