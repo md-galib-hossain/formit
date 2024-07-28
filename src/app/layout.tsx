@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
 
-    <html lang="en" data-theme="cupcake">
+    <html lang="en" data-theme='light'>
       <body className={inter.className}>
         <Header/>
         <Toaster position="top-center" richColors/>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { db } from "@/configs";
@@ -10,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FormUi from "../_component/FormUi";
 import { toast } from "sonner";
+import Controller from "../_component/Controller";
 
 type FormFieldOption = {
   value: string;
@@ -44,7 +44,10 @@ const EditForm = ({ params }: any) => {
   const router = useRouter();
   const [recordId, setRecordId] = useState<number | null>(null);
   const [updateTrigger, setUpdateTrigger] = useState<number | null>(null);
-
+  
+  const [selectedTheme, setSelectedTheme] = useState<string | null>("light");
+  const [selectedBackground, setSelectBackground] = useState<string>("");
+  const [selectedStyle, setSelectStyle] = useState({});
   useEffect(() => {
     if (user) getFormdata();
   }, [user]);
@@ -60,8 +63,15 @@ const EditForm = ({ params }: any) => {
         )
       );
     if (result.length > 0) {
+      // set form id
       setRecordId(result[0].id);
+      //set json form
       setJsonForm(JSON.parse(result[0].jsonform));
+      //set theme
+      setSelectedTheme(result[0]?.theme);
+      // set background
+      setSelectBackground(result[0]?.background || "");
+      result[0]?.style && setSelectStyle(JSON.parse(result[0]?.style) || {});
     }
   };
 
@@ -118,6 +128,24 @@ const EditForm = ({ params }: any) => {
     });
   };
 
+
+  const updateControllerFields = async (value: any, columnName: string) => {
+    if (recordId && user) {
+      const result = await db
+        .update(jsonForms)
+        .set({
+          [columnName]: value,
+        })
+        .where(
+          and(
+            eq(jsonForms.id, recordId),
+            eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
+          )
+        );
+      toast.success(`${columnName.toUpperCase()} Updated!!!`);
+    }
+  };
+console.log(selectedStyle)
   return (
     <div className="p-10">
       <h2
@@ -127,9 +155,30 @@ const EditForm = ({ params }: any) => {
         <ArrowLeft /> Back
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="p-5 border rounded-lg shadow-md">Controller</div>
-        <div className="md:col-span-2 border rounded-lg p-5 flex items-center justify-center">
+        <div className="p-5 border rounded-lg shadow-md">
+          <Controller
+          selectedBackground={selectedBackground}
+          setSelectStyle={(value : any)=>{
+            updateControllerFields(value, "style");
+            setSelectStyle(value)}}
+            setSelectedTheme={(value: any) => {
+              updateControllerFields(value, "theme");
+              setSelectedTheme(value);
+            }}
+            setSelectBackground={(value: any) => {
+              updateControllerFields(value, "background");
+
+              setSelectBackground(value);
+            }}
+          />
+        </div>
+        <div
+          style={{ backgroundImage: selectedBackground }}
+          className="md:col-span-2 border rounded-lg p-5 flex items-center justify-center  min-h-screen"
+        >
           <FormUi
+          selectedStyle={selectedStyle}
+            selectedTheme={selectedTheme}
             onFieldUpdate={onFieldUpdate}
             jsonForm={jsonForm}
             deleteField={(index: any) => deleteField(index)}
