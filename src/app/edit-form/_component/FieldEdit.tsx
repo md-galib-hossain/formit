@@ -8,8 +8,19 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
-const FieldEdit = ({defaultValue,onUpdate} : any) => {
+const FieldEdit = ({defaultValue,onUpdate,deleteField} : any) => {
   const [label, setLabel] = useState(defaultValue.fieldLabel);
   const [placeholder, setPlaceholder] = useState(defaultValue.fieldPlaceholder);
  console.log(defaultValue)
@@ -45,7 +56,24 @@ const FieldEdit = ({defaultValue,onUpdate} : any) => {
           })}>Update</Button>
         </PopoverContent>
       </Popover>
-      <Trash className="h-5 w-5 text-red-500" />
+      <AlertDialog>
+  <AlertDialogTrigger>      <Trash className="h-5 w-5 text-red-500" />
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone, will permanently delete your Field
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={()=> deleteField()}>Continue</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+
+   
     </div>
   );
 };

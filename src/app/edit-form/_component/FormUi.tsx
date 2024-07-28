@@ -14,7 +14,7 @@ import FieldEdit from "./FieldEdit";
 import { TJsonForm } from "../[formId]/page";
 
 
-const FormUi = ({ jsonForm,onFieldUpdate }: { jsonForm: TJsonForm | null,onFieldUpdate:any }) => {
+const FormUi = ({ jsonForm,onFieldUpdate,deleteField }: { jsonForm: TJsonForm | null,onFieldUpdate:any,deleteField:any }) => {
   
   
   return (
@@ -101,7 +101,7 @@ const FormUi = ({ jsonForm,onFieldUpdate }: { jsonForm: TJsonForm | null,onField
                 </div>
               )}
            <div>
-            <FieldEdit defaultValue={field} onUpdate={(value : any)=>onFieldUpdate(value,index)}/>
+            <FieldEdit defaultValue={field} onUpdate={(value : any)=>onFieldUpdate(value,index)} deleteField={()=>deleteField(index)}/>
            </div>
            
             </div>
