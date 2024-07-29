@@ -12,20 +12,26 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Check } from "lucide-react";
 import FieldEdit from "./FieldEdit";
 import { TJsonForm } from "../[formId]/page";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 const FormUi = ({
   jsonForm,
   onFieldUpdate,
   deleteField,
-  selectedTheme,selectedStyle
+  selectedTheme,
+  selectedStyle,
+  editable = true,
 }: {
   jsonForm: TJsonForm | null;
-  onFieldUpdate: any;
-  deleteField: any;
-  selectedTheme: string | null;
-  selectedStyle:any
+  onFieldUpdate?: any;
+  deleteField?: any;
+  selectedTheme: string | "";
+  selectedStyle: any;
+  editable?: boolean;
 }) => {
-  console.log(selectedStyle)
+  console.log(selectedStyle);
   return (
     <>
       {jsonForm ? (
@@ -33,8 +39,9 @@ const FormUi = ({
           className="border p-5 md:w-[600px] rounded-lg"
           data-theme={selectedTheme}
           style={{
-            boxShadow: selectedStyle?.key=='boxshadow'? selectedStyle?.value : "",
-            border:selectedStyle?.key=='border'&&selectedStyle.value
+            boxShadow:
+              selectedStyle?.key == "boxshadow" ? selectedStyle?.value : "",
+            border: selectedStyle?.key == "border" && selectedStyle.value,
           }}
         >
           <h2 className="font-bold text-center text-2xl">
@@ -71,8 +78,14 @@ const FormUi = ({
                   </Label>
                   <RadioGroup>
                     {field?.fieldOptions?.map((option, optIndex) => (
-                      <div key={optIndex} className="flex items-center space-x-2">
-                        <RadioGroupItem value={option.value} id={option.value} />
+                      <div
+                        key={optIndex}
+                        className="flex items-center space-x-2"
+                      >
+                        <RadioGroupItem
+                          value={option.value}
+                          id={option.value}
+                        />
                         <Label htmlFor={option.value}>{option.label}</Label>
                       </div>
                     ))}
@@ -111,16 +124,35 @@ const FormUi = ({
                   />
                 </div>
               )}
-              <div>
-                <FieldEdit
-                  defaultValue={field}
-                  onUpdate={(value: any) => onFieldUpdate(value, index)}
-                  deleteField={() => deleteField(index)}
-                />
-              </div>
+              {editable ? (
+                <div>
+                  <FieldEdit
+                    defaultValue={field}
+                    onUpdate={(value: any) => onFieldUpdate(value, index)}
+                    deleteField={() => deleteField(index)}
+                  />
+                </div>
+              ) : null}
             </div>
           ))}
-          <button className={`btn btn-primary rounded-md`}>Submit</button>
+          <div className={`flex ${editable? "justify-end" : "justify-between"}`} >
+            {editable || (
+              <Link
+                href="/"
+                target="_blank"
+                className="font-semibold flex gap-2 items-center "
+              >
+                <Image
+                  width={30}
+                  height={30}
+                  src={"/watermark2.png"}
+                  alt="logo"
+                />
+              Build Your own Form With Formit Ai
+              </Link>
+            )}
+            <button className={`btn btn-primary rounded-md`}>Submit</button>
+          </div>
         </div>
       ) : null}
     </>
