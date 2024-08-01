@@ -103,11 +103,13 @@ const FormUi = ({
   console.log(jsonForm);
   return (
     <>
-      {jsonForm ? (
+     
+      
+    
         <form
           ref={formRef}
           onSubmit={onFormSubmit}
-          className="border p-5 md:w-[600px] rounded-lg"
+          className={`border p-5 md:w-[600px] rounded-lg ${jsonForm || 'hidden'}`}
           data-theme={selectedTheme}
           style={{
             boxShadow:
@@ -116,10 +118,10 @@ const FormUi = ({
           }}
         >
           <h2 className="font-bold text-center text-2xl">
-            {jsonForm.formTitle}
+            {jsonForm?.formTitle}
           </h2>
           <h2 className="text-sm text-gray-400 text-center">
-            {jsonForm.formSubHeading}
+            {jsonForm?.formSubHeading}
           </h2>
 
           {jsonForm?.formFields?.map((field, index) => (
@@ -250,24 +252,43 @@ const FormUi = ({
               </Link>
             )}
 
-            <button disabled={loading} type="submit" className="btn btn-primary rounded-md relative flex items-center justify-center">
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin absolute" />
-                  <span className="opacity-0">Submit</span>
-                </>
-              ) : (
-                'Submit'
-              )}
-            </button>
+{editable ? (
+  <div
+    className={`btn btn-primary rounded-md relative flex items-center justify-center ${jsonForm ? '' : 'hidden'}`}
+   
+  >
+    {loading ? (
+      <>
+        <Loader2 className="animate-spin absolute" />
+        <span className="opacity-0">Submit</span>
+      </>
+    ) : (
+      'Submit'
+    )}
+  </div>
+) : (
+  <button
+    disabled={loading}
+    type="submit"
+    className={`btn btn-primary rounded-md relative flex items-center justify-center ${jsonForm ? '' : 'hidden'}`}
+  >
+    {loading ? (
+      <>
+        <Loader2 className="animate-spin absolute" />
+        <span className="opacity-0">Submit</span>
+      </>
+    ) : (
+      'Submit'
+    )}
+  </button>
+)}
+
+
           </div>
         </form>
-      ) : <div className="flex items-center min-h-screen">
-      <div className="flex flex-col justify-center items-center">
-        {/* <Image width={70} height={70} src={"/watermark2.png"} alt="logo" /> */}
-        <span className="loading loading-infinity loading-lg text-primary"></span>
-      </div>
-    </div>}
+    
+    
+
     </>
   );
 };

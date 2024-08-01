@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import Controller from "../_component/Controller";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { RWebShare } from "react-web-share";
+import { TRecord } from "@/app/aiform/[formid]/page";
 
 type FormFieldOption = {
   value: string;
@@ -44,51 +46,80 @@ const EditForm = ({ params }: any) => {
   const { user } = useUser();
   const [jsonForm, setJsonForm] = useState<TJsonForm | null>(null);
   const router = useRouter();
-  const [recordId, setRecordId] = useState<number | null>(null);
+  const [record, setRecord] = useState<TRecord | null>(null);
   const [updateTrigger, setUpdateTrigger] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState<string>("light");
   const [selectedBackground, setSelectBackground] = useState<string>("");
   const [selectedStyle, setSelectStyle] = useState({});
+  
   useEffect(() => {
     if (user) getFormdata();
-  }, [user,recordId]);
+  }, [params.formid,user]);
 
   const getFormdata = async () => {
-    const result = await db
-      .select()
-      .from(jsonForms)
-      .where(
-        and(
-          eq(jsonForms.id, params?.formId!),
-          eq(jsonForms.createdBy, user?.primaryEmailAddress?.emailAddress!)
-        )
-      );
-    if (result.length > 0) {
-      // set form id
-      setRecordId(result[0]?.id);
-      //set json form
-      setJsonForm(JSON.parse(result[0].jsonform));
-      //set theme
-      setSelectedTheme(result[0]?.theme || "");
-      // set background
-      setSelectBackground(result[0]?.background || "");
-      result[0]?.style && setSelectStyle(JSON.parse(result[0]?.style) || {});
+    setLoading(true);
+    try {
+      const result = await db
+        .select()
+        .from(jsonForms)
+        .where(
+          and(
+            eq(jsonForms.id, params?.formId!),
+            eq(jsonForms.createdBy, user?.primaryEmailAddress?.emailAddress!)
+          )
+        );
+      if (result.length > 0) {
+        // set record
+        const recordData = result[0];
+        const parsedJsonForm: TJsonForm = JSON.parse(recordData?.jsonform);
+        const record: TRecord = {
+          id: recordData?.id,
+          jsonform: parsedJsonForm,
+          theme: recordData?.theme || "",
+          style: JSON.parse(recordData?.style as any) || null,
+          background: recordData?.background || "",
+          createdBy: recordData?.createdBy,
+          createdAt: recordData?.createdDate,
+        };
+        setRecord(record);
+        // set json form
+        setJsonForm(parsedJsonForm);
+        // set theme
+        setSelectedTheme(record?.theme);
+        // set background
+        setSelectBackground(record?.background);
+        record?.style && setSelectStyle(record.style);
+      }
+    } catch (error) {
+      console.error("Error fetching form data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateJsonFormInDb = async (updatedJsonForm: TJsonForm) => {
-    if (recordId && user) {
-      await db
-        .update(jsonForms)
-        .set({ jsonform: JSON.stringify(updatedJsonForm) })
-        .where(
-          and(
-            eq(jsonForms.id, recordId),
-            eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
-          )
-        );
-      toast.success("Updated!!!");
+    if (record && user) {
+      // setLoading(true);
+      try {
+        await db
+          .update(jsonForms)
+          .set({ jsonform: JSON.stringify(updatedJsonForm) })
+          .where(
+            and(
+              eq(jsonForms.id, record.id),
+              eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
+            )
+          );
+        toast.success("Updated!!!");
+      } catch (error) {
+        console.error("Error updating form data:", error);
+        toast.error("Failed to update form data.");
+      }
+      //  finally {
+      //   setLoading(false);
+      // }
     }
   };
 
@@ -131,81 +162,102 @@ const EditForm = ({ params }: any) => {
   };
 
   const updateControllerFields = async (value: any, columnName: string) => {
-    if (recordId && user) {
-      const result = await db
-        .update(jsonForms)
-        .set({
-          [columnName]: value,
-        })
-        .where(
-          and(
-            eq(jsonForms.id, recordId),
-            eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
-          )
-        );
-      toast.success(`${columnName.toUpperCase()} Updated!!!`);
+    if (record && user) {
+      // setLoading(true);
+      try {
+        await db
+          .update(jsonForms)
+          .set({ [columnName]: value })
+          .where(
+            and(
+              eq(jsonForms.id, record.id),
+              eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
+            )
+          );
+        toast.success(`${columnName.toUpperCase()} Updated!!!`);
+      } catch (error) {
+        console.error(`Error updating ${columnName}:`, error);
+        toast.error(`Failed to update ${columnName}.`);
+      } finally {
+        // setLoading(false);
+      }
     }
   };
-  console.log(user?.primaryEmailAddress?.emailAddress);
+
+  console.log(record);
+
   return (
     <div className="p-10">
-      <div className="flex justify-between items-center">
-        {" "}
-        <h2
-          onClick={() => router.back()}
-          className="flex gap-2 items-center my-5 cursor-pointer hover:font-bold transition-all"
-        >
-          <ArrowLeft /> Back
-        </h2>
-        <div className="flex gap-2">
-         
-           <Link href={`/aiform/${params.formId}`} target="_blank">
-          <Button className="flex gap-2">
-            {" "}
-            <SquareArrowOutUpRight className="w-5" /> Live Preview
-          </Button>
-          </Link> 
-         
-
-          <Button className="flex gap-2 bg-green-600 hover:bg-green-700">
-            {" "}
-            <Share2 className="w-5" /> Share
-          </Button>
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+        <div className="flex flex-col justify-center items-center">
+          {/* <Image width={70} height={70} src={"/watermark2.png"} alt="logo" /> */}
+          <span className="loading loading-infinity loading-lg text-primary"></span>
+        
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="p-5 border rounded-lg shadow-md">
-          <Controller
-            selectedBackground={selectedBackground}
-            setSelectStyle={(value: any) => {
-              updateControllerFields(value, "style");
-              setSelectStyle(value);
-            }}
-            setSelectedTheme={(value: any) => {
-              updateControllerFields(value, "theme");
-              setSelectedTheme(value);
-            }}
-            setSelectBackground={(value: any) => {
-              updateControllerFields(value, "background");
-
-              setSelectBackground(value);
-            }}
-          />
-        </div>
-        <div
-          style={{ backgroundImage: selectedBackground }}
-          className="md:col-span-2 border rounded-lg p-5 flex items-center justify-center  min-h-screen"
-        >
-          <FormUi
-            selectedStyle={selectedStyle}
-            selectedTheme={selectedTheme}
-            onFieldUpdate={onFieldUpdate}
-            jsonForm={jsonForm}
-            deleteField={(index: any) => deleteField(index)}
-          />
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="flex justify-between items-center">
+            <h2
+              onClick={() => router.back()}
+              className="flex gap-2 items-center my-5 cursor-pointer hover:font-bold transition-all"
+            >
+              <ArrowLeft /> Back
+            </h2>
+            <div className="flex gap-2">
+              <Link href={`/aiform/${params.formId}`} target="_blank">
+                <Button className="flex gap-2">
+                  <SquareArrowOutUpRight className="w-5" /> Live Preview
+                </Button>
+              </Link>
+              <RWebShare
+                data={{
+                  text: record?.jsonform?.formSubHeading + " , Build Your Form In Second With Formit Ai",
+                  url: process.env.NEXT_PUBLIC_BASE_URL + "/aiform/" + record?.id,
+                  title: record?.jsonform.formTitle,
+                }}
+                onClick={() => console.log("shared successfully!")}
+              >
+                <Button className="flex gap-2 bg-green-600 hover:bg-green-700">
+                  <Share2 className="w-5" /> Share
+                </Button>
+              </RWebShare>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="p-5 border rounded-lg shadow-md">
+              <Controller
+                selectedBackground={selectedBackground}
+                setSelectStyle={(value: any) => {
+                  updateControllerFields(value, "style");
+                  setSelectStyle(value);
+                }}
+                setSelectedTheme={(value: any) => {
+                  updateControllerFields(value, "theme");
+                  setSelectedTheme(value);
+                }}
+                setSelectBackground={(value: any) => {
+                  updateControllerFields(value, "background");
+                  setSelectBackground(value);
+                }}
+              />
+            </div>
+            <div
+              style={{ backgroundImage: selectedBackground }}
+              className="md:col-span-2 border rounded-lg p-5 flex items-center justify-center min-h-screen"
+            >
+              <FormUi
+                selectedStyle={selectedStyle}
+                selectedTheme={selectedTheme}
+                onFieldUpdate={onFieldUpdate}
+                jsonForm={jsonForm}
+                deleteField={(index: any) => deleteField(index)}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
