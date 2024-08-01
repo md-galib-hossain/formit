@@ -52,7 +52,7 @@ const EditForm = ({ params }: any) => {
   const [selectedStyle, setSelectStyle] = useState({});
   useEffect(() => {
     if (user) getFormdata();
-  }, [user]);
+  }, [user,recordId]);
 
   const getFormdata = async () => {
     const result = await db
@@ -66,7 +66,7 @@ const EditForm = ({ params }: any) => {
       );
     if (result.length > 0) {
       // set form id
-      setRecordId(result[0].id);
+      setRecordId(result[0]?.id);
       //set json form
       setJsonForm(JSON.parse(result[0].jsonform));
       //set theme
@@ -146,7 +146,7 @@ const EditForm = ({ params }: any) => {
       toast.success(`${columnName.toUpperCase()} Updated!!!`);
     }
   };
-  console.log(selectedStyle);
+  console.log(user?.primaryEmailAddress?.emailAddress);
   return (
     <div className="p-10">
       <div className="flex justify-between items-center">
@@ -158,12 +158,14 @@ const EditForm = ({ params }: any) => {
           <ArrowLeft /> Back
         </h2>
         <div className="flex gap-2">
-          <Link href={`/aiform/${recordId}`} target="_blank">
+         
+           <Link href={`/aiform/${params.formId}`} target="_blank">
           <Button className="flex gap-2">
             {" "}
             <SquareArrowOutUpRight className="w-5" /> Live Preview
           </Button>
-          </Link>
+          </Link> 
+         
 
           <Button className="flex gap-2 bg-green-600 hover:bg-green-700">
             {" "}
