@@ -56,8 +56,9 @@ const FormListItem = ({
   };
 
   return (
-    <div className="border shadow-sm rounded-lg p-4">
-      <div className="flex justify-between">
+    <div className="border shadow-sm rounded-lg p-4 flex flex-col justify-between min-h-[200px]">
+     <div>
+     <div className="flex justify-between">
         {/* Alert dialog start */}
         <div></div>
         <AlertDialog>
@@ -84,7 +85,9 @@ const FormListItem = ({
       </div>
       <h2 className="text-lg text-black">{jsonForm.formTitle}</h2>
       <h2 className="text-sm text-gray-500">{jsonForm.formSubHeading}</h2>
-      <hr className="my-3" />
+     </div>
+    <div>
+    <hr className="my-3" />
       <div className="flex justify-between">
        
        <div>
@@ -111,6 +114,7 @@ const FormListItem = ({
        
         </Link>
       </div>
+    </div>
     </div>
   );
 };

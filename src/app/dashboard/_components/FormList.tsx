@@ -21,7 +21,7 @@ export type TFormItem = {
 
 const FormList = () => {
   const { user } = useUser();
-  const [formList, setFormList] = useState<TFormItem[]>([]); // Initialize with an empty array
+  const [formList, setFormList] = useState<TFormItem[]>([]); 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress) {

@@ -10,7 +10,7 @@ const page = () => {
 <CreateForm/>
 
 </h2>
-{/* List o forms */}
+{/* List of forms */}
 <FormList/>
     </div>
   )

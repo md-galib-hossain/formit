@@ -69,7 +69,7 @@ const FormListItemResponse = ({
   };
 
   return (
-    <div className="border shadow-sm rounded-lg p-4 my-5 flex flex-col justify-between">
+    <div className="border shadow-sm rounded-lg p-4 my-5 flex flex-col justify-between ">
       <div>
         <h2 className="text-lg text-black">
           {formRecord?.jsonform?.formTitle}
