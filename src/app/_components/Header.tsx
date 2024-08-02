@@ -9,28 +9,36 @@ import { useEffect } from "react";
 
 const Header = () => {
   const { user, isSignedIn } = useUser();
-  const path = usePathname()
-  useEffect(()=>{
-console.log(path)
-  },[])
-  console.log(user)
-  return !path.includes('aiform')&&(
-    <div className="p-3 border shadow-sm">
-      {/* logo */}
-      <div className="flex items-center justify-between">
-        <Image src={logo} width={200} height={200} alt="logo" />
-        {isSignedIn ? (
-          <div className="flex items-center gap-5">
-           <Link href={'/dashboard'}>
-            <Button variant="outline">Dashboard</Button></Link> <UserButton />
+  const path = usePathname();
+
+  useEffect(() => {
+    console.log(path);
+  }, [path]);
+
+  console.log(user);
+
+  return (
+    !path.includes("aiform") && (
+      <div className="py-2 px-3 border shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="relative w-24 h-10 md:w-48 md:h-16 lg:w-56 lg:h-20">
+            <Image src={logo} layout="fill" objectFit="contain" alt="logo" />
           </div>
-        ) : (
-          <SignInButton>
-            <Button className="hover:bg-customHover">Get started</Button>
-          </SignInButton>
-        )}
+          {isSignedIn ? (
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard">
+                <Button variant="outline">Dashboard</Button>
+              </Link>
+              <UserButton />
+            </div>
+          ) : (
+            <SignInButton>
+              <Button className="hover:bg-customHover">Get started</Button>
+            </SignInButton>
+          )}
+        </div>
       </div>
-    </div>
+    )
   );
 };
 

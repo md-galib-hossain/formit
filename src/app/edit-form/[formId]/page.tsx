@@ -215,7 +215,7 @@ const EditForm = ({ params }: any) => {
                 data={{
                   text: record?.jsonform?.formSubHeading + " , Build Your Form In Second With Formit Ai",
                   url: process.env.NEXT_PUBLIC_BASE_URL + "/aiform/" + record?.id,
-                  title: record?.jsonform.formTitle,
+                  title: record?.jsonform.formTitle ,
                 }}
                 onClick={() => console.log("shared successfully!")}
               >

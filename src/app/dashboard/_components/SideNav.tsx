@@ -6,6 +6,7 @@ import {
   ShieldEllipsis,
   SquareLibrary,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -43,7 +44,7 @@ const SideNav = () => {
       <div className="p-5">
         {menuList.map((menu, index) => {
           return (
-            <h2
+            <Link href={menu.path}
               key={index}
               className={`flex items-center gap-3 p-4 mb-3 hover:bg-primary hover:text-white rounded-lg cursor-pointer text-gray-500 ${
                 path === menu.path && "bg-primary text-white"
@@ -51,7 +52,7 @@ const SideNav = () => {
             >
               {" "}
               <menu.icon /> {menu.name}
-            </h2>
+            </Link>
           );
         })}
       </div>

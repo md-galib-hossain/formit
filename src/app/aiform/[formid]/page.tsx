@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 export type TRecord = {
-  jsonform: TJsonForm;
+  jsonform: TJsonForm ;
   id: number;
   theme: string;
   style: any;
