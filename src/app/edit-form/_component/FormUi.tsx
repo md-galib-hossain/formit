@@ -90,12 +90,17 @@ const FormUi = ({
     setLoading(true);
     console.log(formData);
   
-    // Collect email from formData, or use a default value
-    const email = formData.email || "default@example.com"; 
+    // Ensure that the email field is collected from the form
+    const email = formData.email;
+    if (!email) {
+      toast.error("Email is required");
+      setLoading(false);
+      return;
+    }
   
     try {
       const result = await db.insert(userResponses).values({
-        email: email,
+        email: email, // Ensure this field is included
         jsonResponse: JSON.stringify(formData),
         createdDate: moment().format("DD/MM/yyyy"),
         createdBy: createdBy,
@@ -116,6 +121,7 @@ const FormUi = ({
       setLoading(false);
     }
   };
+  
 
   console.log(jsonForm);
   return (
