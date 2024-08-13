@@ -1,3 +1,4 @@
+"use client"
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -21,6 +22,7 @@ import { userResponses } from "@/configs/schema";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
+import getCurrentUser from "@/lib/getCurrentUser";
 
 type TFormData = {
   [key: string]: any;
@@ -45,9 +47,11 @@ const FormUi = ({
   createdBy?: string;
   formId?: number;
 }) => {
+  const {user} = useUser()
   const [formData, setFormData] = useState<TFormData>({});
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -91,7 +95,7 @@ const FormUi = ({
     console.log(formData);
   
     // Ensure that the email field is collected from the form
-    const email = formData.email;
+    const email = user?.primaryEmailAddress?.emailAddress;
     if (!email) {
       toast.error("Email is required");
       setLoading(false);

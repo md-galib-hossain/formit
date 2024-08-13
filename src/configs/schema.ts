@@ -58,7 +58,7 @@ export const jsonForms = pgTable("jsonForms", {
 
 export const userResponses = pgTable("userResponses", {
   id: serial("id").primaryKey(),
-  email: varchar("email"),
+  email: varchar("email").notNull(),
 
   jsonResponse: text("jsonResponse").notNull(),
   createdBy: varchar("createdBy").default("anonymous"),
