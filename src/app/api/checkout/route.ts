@@ -2,10 +2,11 @@
  
 // import { stripe } from "@/lib/getStripe";
 import getCurrentUser from "@/lib/getCurrentUser";
-import { useUser } from "@clerk/nextjs";
+import { stripe } from "@/lib/getStripe";
+// import { stripe } from "@/lib/getStripe";
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!);
+// import Stripe from "stripe";
+// const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!);
 export async function POST(req: NextRequest) {
   const { priceId } = await req.json();
   const user = await getCurrentUser();
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/dashboard/cancel`,
    
     });
+    console.log(session)
  
     return NextResponse.json({ sessionId: session.id });
     // return NextResponse.json(user);

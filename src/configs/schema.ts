@@ -1,4 +1,13 @@
-import { integer, pgTable, serial, text, varchar, uniqueIndex, timestamp, primaryKey } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  serial,
+  text,
+  varchar,
+  uniqueIndex,
+  timestamp,
+  primaryKey,
+} from "drizzle-orm/pg-core";
 
 export const plans = pgTable("plans", {
   id: serial("id").primaryKey(),
@@ -12,11 +21,13 @@ export const subscriptionPeriods = pgTable("subscriptionPeriods", {
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  clerkId : varchar("clerkId").notNull().unique(),
+  clerkId: varchar("clerkId").notNull().unique(),
   email: varchar("email").notNull().unique(),
   name: varchar("name"),
   image: varchar("image"),
-  planId: integer("planId").references(() => plans.id).default(1), // assuming '1' is the id for 'free' plan
+  planId: integer("planId")
+    .references(() => plans.id)
+    .default(1), // assuming '1' is the id for 'free' plan
   customerId: varchar("customerId").unique(),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow(),
@@ -24,7 +35,9 @@ export const users = pgTable("users", {
 
 export const subscriptions = pgTable("subscriptions", {
   id: serial("id").primaryKey(),
-  userId: integer("userId").references(() => users.id).unique(),
+  userId: integer("userId")
+    .references(() => users.id)
+    .unique(),
   planId: integer("planId").references(() => plans.id),
   periodId: integer("periodId").references(() => subscriptionPeriods.id),
   startDate: timestamp("startDate").defaultNow(),
@@ -45,6 +58,8 @@ export const jsonForms = pgTable("jsonForms", {
 
 export const userResponses = pgTable("userResponses", {
   id: serial("id").primaryKey(),
+  email: varchar("email").notNull(),
+
   jsonResponse: text("jsonResponse").notNull(),
   createdBy: varchar("createdBy").default("anonymous"),
   createdDate: varchar("createdAt").notNull(),
