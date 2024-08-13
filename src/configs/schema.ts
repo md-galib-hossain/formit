@@ -13,7 +13,6 @@ export const subscriptionPeriods = pgTable("subscriptionPeriods", {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   clerkId : varchar("clerkId").notNull().unique(),
-  userName: varchar("userName").notNull().unique(),
   email: varchar("email").notNull().unique(),
   name: varchar("name"),
   image: varchar("image"),
