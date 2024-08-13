@@ -89,19 +89,31 @@ const FormUi = ({
     event.preventDefault();
     setLoading(true);
     console.log(formData);
-    const result = await db.insert(userResponses).values({
-      jsonResponse: JSON.stringify(formData),
-      createdDate: moment().format("DD/MM/yyyy"),
-      createdBy: createdBy,
-      formRef: formId,
-    });
-    console.log(result);
-    if (result.rowCount > 0) {
-      formRef.current?.reset();
-      toast.success("Response Submitted Successfully");
-      setLoading(false);
-    } else {
+  
+    // Collect email from formData, or use a default value
+    const email = formData.email || "default@example.com"; 
+  
+    try {
+      const result = await db.insert(userResponses).values({
+        email: email,
+        jsonResponse: JSON.stringify(formData),
+        createdDate: moment().format("DD/MM/yyyy"),
+        createdBy: createdBy,
+        formRef: formId,
+      });
+  
+      console.log(result);
+      if (result.rowCount > 0) {
+        formRef.current?.reset();
+        toast.success("Response Submitted Successfully");
+      } else {
+        toast.error("Error While Saving the Form");
+      }
+    } catch (error) {
+      console.error("Insert Error:", error);
       toast.error("Error While Saving the Form");
+    } finally {
+      setLoading(false);
     }
   };
 
