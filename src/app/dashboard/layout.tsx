@@ -1,9 +1,10 @@
 "use client"
-import { SignedIn } from "@clerk/nextjs"
+import { SignedIn, useUser } from "@clerk/nextjs"
 import { ReactNode } from "react"
 import SideNav from "./_components/SideNav"
 
 const DashboardLayout = ({children}:{children : ReactNode}) => {
+ 
   return (
     <SignedIn>
     <div>
