@@ -33,6 +33,7 @@ const [loading,setLoading] = useState(false)
         theme: form.theme || "",
         background: form.background || "",
         style: form.style || {},
+        enableSignIn: form.enableSignIn ?? false,
       }));
 
       setFormList(parsedResult);
