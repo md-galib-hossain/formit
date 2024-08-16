@@ -63,7 +63,7 @@ const FormList = () => {
           </div>
         </div>
       ) : (
-        <div className="mt-5 grid grid-cols-2 md:grid-cols-3 gap-5">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
           {formList?.map((form, index) => (
             <div key={form.id}>
               <FormListItem

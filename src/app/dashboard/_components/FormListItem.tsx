@@ -88,7 +88,7 @@ const FormListItem = ({
      </div>
     <div>
     <hr className="my-3" />
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row justify-center items-center md:justify-between gap-2">
        
        <div>
 

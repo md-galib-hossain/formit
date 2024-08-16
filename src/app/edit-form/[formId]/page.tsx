@@ -82,7 +82,7 @@ const EditForm = ({ params }: any) => {
           background: recordData?.background || "",
           createdBy: recordData?.createdBy,
           createdAt: recordData?.createdDate,
-          enableSignIn: recordData?.enableSignIn!
+          enableSignIn: recordData?.enableSignIn! || false
         };
         setRecord(record);
         // set json form

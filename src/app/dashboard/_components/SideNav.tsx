@@ -17,7 +17,7 @@ import { TFormItem } from "./FormList";
 import { TJsonForm } from "@/app/edit-form/[formId]/page";
 
 const SideNav = () => {
-  const {user} = useUser()
+  const { user } = useUser();
   const menuList = [
     {
       id: 1,
@@ -44,17 +44,16 @@ const SideNav = () => {
       path: "/dashboard/upgrade",
     },
   ];
-  
-  const [loading,setLoading] = useState(false)
-  const [percentageFileCreated,setPercentageFileCreated] = useState(0)
-  const [formList,setFormList] = useState<TFormItem[]>([])
+
+  const [loading, setLoading] = useState(false);
+  const [percentageFileCreated, setPercentageFileCreated] = useState(0);
+  const [formList, setFormList] = useState<TFormItem[]>([]);
   const path = usePathname();
+
   useEffect(() => {
-    if(user){
-
-      getFormList()
+    if (user) {
+      getFormList();
     }
-
   }, [user]);
 
   const getFormList = async () => {
@@ -74,41 +73,46 @@ const SideNav = () => {
         }));
 
         setFormList(parsedResult);
-        const perc = (result.length/3)*100
-        setPercentageFileCreated(perc)
-        setLoading(false);
+        const perc = (result.length / 3) * 100;
+        setPercentageFileCreated(perc);
       } catch (error) {
         console.error("Error fetching form list:", error);
+      } finally {
+        setLoading(false);
       }
     }
   };
+
   return (
-    <div className="h-screen shadow-md border">
-      <div className="p-5">
-        {menuList.map((menu, index) => {
-          return (
-            <Link href={menu.path}
-              key={index}
-              className={`flex items-center gap-3 p-4 mb-3 hover:bg-primary hover:text-white rounded-lg cursor-pointer text-gray-500 ${
-                path === menu.path && "bg-primary text-white"
-              }`}
-            >
-              {" "}
-              <menu.icon /> {menu.name}
-            </Link>
-          );
-        })}
+    <div className="h-screen shadow-md border bg-white flex flex-col">
+      <div className="p-5 flex-grow overflow-y-auto">
+        {menuList.map((menu) => (
+          <Link
+            href={menu.path}
+            key={menu.id}
+            className={`flex items-center gap-3 p-4 mb-3 hover:bg-primary hover:text-white rounded-lg cursor-pointer text-gray-500 ${
+              path === menu.path ? "bg-primary text-white" : ""
+            }`}
+          >
+            <menu.icon className="w-5 h-5" />
+            <span className="">{menu.name}</span>
+          </Link>
+        ))}
       </div>
 
-      <div className="fixed bottom-7 p-6 w-64">
-        <Button className="w-full">+ create Form</Button>
-        <div className="my-7 ">
-          {loading ? <Progress hidden /> : <Progress value={percentageFileCreated} />}
+      <div className="p-6 w-full md:w-64">
+        <Button className="w-full">+ Create Form</Button>
+        <div className="my-7">
+          {loading ? (
+            <Progress hidden />
+          ) : (
+            <Progress value={percentageFileCreated} />
+          )}
           <h2 className="text-sm mt-2 text-gray-600">
-            <strong>{formList?.length}</strong> Out of <strong>3</strong> File Created
+            <strong>{formList.length}</strong> Out of <strong>3</strong> Files Created
           </h2>
           <h2 className="text-sm mt-3 text-gray-600">
-          Upgrade your plan for unlimited Ai form build
+            Upgrade your plan for unlimited AI form build
           </h2>
         </div>
       </div>
