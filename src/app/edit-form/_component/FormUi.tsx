@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,7 +20,7 @@ import { db } from "@/configs";
 import moment from "moment";
 import { userResponses } from "@/configs/schema";
 import { toast } from "sonner";
-import { useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import getCurrentUser from "@/lib/getCurrentUser";
 
@@ -47,11 +47,11 @@ const FormUi = ({
   createdBy?: string;
   formId?: number;
 }) => {
-  const {user} = useUser()
+  const { user, isSignedIn } = useUser();
   const [formData, setFormData] = useState<TFormData>({});
   const [loading, setLoading] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -93,7 +93,7 @@ const FormUi = ({
     event.preventDefault();
     setLoading(true);
     console.log(formData);
-  
+
     // Ensure that the email field is collected from the form
     const email = user?.primaryEmailAddress?.emailAddress;
     if (!email) {
@@ -101,7 +101,7 @@ const FormUi = ({
       setLoading(false);
       return;
     }
-  
+
     try {
       const result = await db.insert(userResponses).values({
         email: email, // Ensure this field is included
@@ -110,7 +110,7 @@ const FormUi = ({
         createdBy: createdBy,
         formRef: formId,
       });
-  
+
       console.log(result);
       if (result.rowCount > 0) {
         formRef.current?.reset();
@@ -125,7 +125,6 @@ const FormUi = ({
       setLoading(false);
     }
   };
-  
 
   console.log(jsonForm);
   return (
@@ -291,7 +290,7 @@ const FormUi = ({
                 "Submit"
               )}
             </div>
-          ) : (
+          ) : isSignedIn ? (
             <button
               disabled={loading}
               type="submit"
@@ -308,6 +307,10 @@ const FormUi = ({
                 "Submit"
               )}
             </button>
+          ) : (
+            <Button>
+              <SignInButton mode='modal'>Sign In Before Submit</SignInButton>
+            </Button>
           )}
         </div>
       </form>

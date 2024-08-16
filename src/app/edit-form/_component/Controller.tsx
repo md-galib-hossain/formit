@@ -1,7 +1,9 @@
+"use client"
 import gradientBg from "@/app/_data/gradientBg";
 import style from "@/app/_data/style";
 import themes from "@/app/_data/themes";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -15,7 +17,7 @@ import { useState } from "react";
 const Controller = ({
   setSelectedTheme,
   setSelectBackground,
-  selectedBackground,setSelectStyle
+  selectedBackground,setSelectStyle,setSignInEnable,enableSignInCheckbox
 }: any) => {
   const [showMore, setShowMore] = useState(6);
   return (
@@ -99,6 +101,11 @@ const Controller = ({
     ))
 }
 </div>
+
+<div className="flex gap-2 my-4 items-center mt-10">
+  <Checkbox defaultChecked={enableSignInCheckbox} onCheckedChange={(e)=> setSignInEnable(e)}/><h2>Enable Social Authentication before submit the form</h2>
+</div>
+
     </div>
   );
 };

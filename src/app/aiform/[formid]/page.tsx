@@ -14,6 +14,7 @@ export type TRecord = {
   background: string;
   createdBy: string;
   createdAt?: any;
+  enableSignIn?: boolean
 };
 
 const LiveAiForm = ({ params }: any) => {

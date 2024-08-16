@@ -82,6 +82,7 @@ const EditForm = ({ params }: any) => {
           background: recordData?.background || "",
           createdBy: recordData?.createdBy,
           createdAt: recordData?.createdDate,
+          enableSignIn: recordData?.enableSignIn!
         };
         setRecord(record);
         // set json form
@@ -241,6 +242,10 @@ const EditForm = ({ params }: any) => {
                   updateControllerFields(value, "background");
                   setSelectBackground(value);
                 }}
+                setSignInEnable={(value:any)=>{
+                  updateControllerFields(value,'enableSignIn')
+                }}
+                enableSignInCheckbox={record?.enableSignIn}
               />
             </div>
             <div

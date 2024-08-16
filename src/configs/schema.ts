@@ -7,6 +7,7 @@ import {
   uniqueIndex,
   timestamp,
   primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const plans = pgTable("plans", {
@@ -54,6 +55,7 @@ export const jsonForms = pgTable("jsonForms", {
   style: varchar("style"),
   createdBy: varchar("createdBy").notNull(),
   createdDate: varchar("createdAt").notNull(),
+  enableSignIn: boolean('enableSignIn').default(false)
 });
 
 export const userResponses = pgTable("userResponses", {
