@@ -21,9 +21,9 @@ const Header = () => {
     !path.includes("aiform") && (
       <div className="py-2 px-3 border shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="relative w-36 h-10 md:w-48 md:h-12 lg:w-56 lg:h-16">
+          <Link href="/" className="relative w-36 h-10 md:w-48 md:h-12 lg:w-56 lg:h-16">
             <Image src={logo} layout="fill" objectFit="contain" alt="logo" />
-          </div>
+          </Link>
           {isSignedIn ? (
             <div className="flex items-center gap-3">
               <Link href="/dashboard">

@@ -1,5 +1,5 @@
 "use client";
-import PricingPlan from "@/app/_data/PricingPlan";
+import PricingPlan from "@/app/_data/PricingPlan"; // Import your PricingPlan data
 import { Button } from "@/components/ui/button";
 import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
@@ -38,20 +38,21 @@ const Upgrade = () => {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 flex justify-center">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-center md:gap-8">
-        {PricingPlan.map((item, index) => (
+        {PricingPlan.map((item) => (
           <div
-            key={index}
-            className="rounded-2xl border border-gray-200 p-6 shadow-sm sm:px-8 lg:p-12"
+            key={item.priceId}
+            className="rounded-2xl flex flex-col h-full justify-between border border-gray-200 p-6 min-h-[454px] shadow-sm sm:px-8 lg:p-12"
           >
+            {/* flex 1 start */}
+            <div>
             <div className="text-center">
               <h2 className="text-lg font-medium text-gray-900">
-                {item.duration}
-                <span className="sr-only">Plan</span>
+                {item.duration} Plan
               </h2>
 
               <p className="mt-2 sm:mt-4">
                 <strong className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                  {item.price}$
+                  ${item.price}
                 </strong>
 
                 <span className="text-sm font-medium text-gray-700">
@@ -61,75 +62,31 @@ const Upgrade = () => {
             </div>
 
             <ul className="mt-6 space-y-2">
-              <li className="flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-5 text-indigo-700"
+              {item.features.map((feature, index) => (
+                <li
+                  key={index}
+                  className={`flex items-center gap-1 ${feature.available ? 'text-gray-700' : 'text-gray-400'}`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 12.75l6 6 9-13.5"
-                  />
-                </svg>
-                <span className="text-gray-700">10 users included</span>
-              </li>
-              <li className="flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-5 text-indigo-700"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 12.75l6 6 9-13.5"
-                  />
-                </svg>
-                <span className="text-gray-700">2GB of storage</span>
-              </li>
-              <li className="flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-5 text-indigo-700"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 12.75l6 6 9-13.5"
-                  />
-                </svg>
-                <span className="text-gray-700">Email support</span>
-              </li>
-              <li className="flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-5 text-indigo-700"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 12.75l6 6 9-13.5"
-                  />
-                </svg>
-                <span className="text-gray-700">Help center access</span>
-              </li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className={`size-5 ${feature.available ? 'text-indigo-700' : 'text-gray-400'}`}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
+                  </svg>
+                  <span>{feature.name}</span>
+                </li>
+              ))}
             </ul>
+            </div>
+            {/* flex 1 end */}
             <Button
               disabled={loading[item.priceId]}
               onClick={() => handleStripe(item.priceId)}
