@@ -1,11 +1,13 @@
-"use client";
 
 import { SignedIn } from "@clerk/nextjs";
 import { ReactNode } from "react";
 import SideNav from "./_components/SideNav";
 import { Menu } from "lucide-react";
+import { getUserData } from "@/lib/getCurrentUser";
 
-const DashboardLayout = ({ children }: { children: ReactNode }) => {
+const DashboardLayout = async ({ children }: { children: ReactNode }) => {
+  const user = await getUserData();
+
   return (
     <SignedIn>
       <div className="drawer lg:drawer-open">
@@ -26,7 +28,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             className="drawer-overlay"
           ></label>
           <div className="w-64 bg-white shadow-md h-full">
-            <SideNav />
+            <SideNav user={user}/>
           </div>
         </div>
       </div>

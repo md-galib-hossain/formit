@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import moment from 'moment'
+import moment from 'moment';
 import {
   Dialog,
   DialogClose,
@@ -14,40 +14,43 @@ import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/configs";
 import { AiChatSession } from "@/configs/AiModal";
 import { jsonForms } from "@/configs/schema";
-import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-const CreateForm = () => {
+const CreateForm = ({ user }: any) => {
   const prompt =
-  ", based on the description, please provide the form in JSON format with the following structure: formTitle, formSubHeading, formFields (an array of objects with properties: fieldName, fieldLabel, fieldType, fieldPlaceholder, fieldRequired, and fieldOptions for select and radio fields, where fieldOptions is an array of objects with value and label). Ensure that the data format is consistent as described.";
+    ", based on the description, please provide the form in JSON format with the following structure: formTitle, formSubHeading, formFields (an array of objects with properties: fieldName, fieldLabel, fieldType, fieldPlaceholder, fieldRequired, and fieldOptions for select and radio fields, where fieldOptions is an array of objects with value and label). Ensure that the data format is consistent as described.";
 
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const {user} = useUser()
-  const router = useRouter()
+  const router = useRouter();
+
   const onCreateForm = async () => {
     setLoading(true);
-    const result = await AiChatSession.sendMessage(
-      "Description:" + userInput + prompt
-    );
-    const response = result?.response?.text();
-    if (response) {
+    try {
+      const result = await AiChatSession.sendMessage(
+        "Description:" + userInput + prompt
+      );
+      const response = await result?.response?.text();
+      if (response) {
         const res = await db.insert(jsonForms).values({
-            jsonform: response,
-            createdBy: user?.primaryEmailAddress?.emailAddress!,
-            createdDate: moment().format('DD/MM/yyy')
-        }).returning({id: jsonForms.id})
-        console.log("New form id",res[0].id)
-        if(res[0].id){
-            router.push(`/edit-form/${res[0].id}`)
+          jsonform: response,
+          createdBy: user?.email,
+          createdDate: moment().format('DD/MM/yyyy'),
+        }).returning({ id: jsonForms.id });
+        
+        if (res[0]?.id) {
+          router.push(`/edit-form/${res[0].id}`);
         }
+      }
+    } catch (error) {
+      console.error("Error creating form:", error);
+    } finally {
       setLoading(false);
     }
-    setLoading(false);
-
   };
+
   return (
     <div>
       <Dialog>
@@ -67,7 +70,9 @@ const CreateForm = () => {
                 <DialogClose asChild>
                   <Button variant={"destructive"}>Cancel</Button>
                 </DialogClose>
-                <Button disabled={loading}  onClick={() => onCreateForm()}>{loading? <Loader2 className="animate-spin" /> : 'Create'}</Button>
+                <Button disabled={loading} onClick={onCreateForm}>
+                  {loading ? <Loader2 className="animate-spin" /> : 'Create'}
+                </Button>
               </div>
             </DialogDescription>
           </DialogHeader>
