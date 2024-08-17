@@ -9,7 +9,7 @@ import { stripe } from "@/lib/getStripe";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
-const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
+ 
 
 // Helper function to get planId based on plan name
 async function getPlanId(planName: string): Promise<number> {
@@ -33,11 +33,14 @@ function getPeriodId(priceId: string): number {
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const sig = req.headers.get("stripe-signature")!;
+  const sig = req.headers.get("Stripe-Signature")!;
   let event: Stripe.Event;
 
+  console.log(sig)
+  console.log(body)
+  console.log(process.env.STRIPE_WEBHOOK_SECRET!)
   try {
-    event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: any) {
     console.error("Webhook signature verification failed.", err.message);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });

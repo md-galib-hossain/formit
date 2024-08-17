@@ -28,9 +28,7 @@ const Analytics = () => {
     fetchAnalytics();
   }, []);
 
-  if (!analyticsData) {
-    return <div>Loading...</div>;
-  }
+  
 
   return (
     <div className="p-14">
@@ -38,24 +36,34 @@ const Analytics = () => {
         <h2 className="font-bold text-3xl ">Alalytics</h2>
         <div></div>
       </div>
-
-      <div className="flex flex-wrap gap-4 py-4">
-        <div className="border shadow-sm rounded-lg p-6 flex items-center w-full sm:w-1/2 lg:w-1/4">
-          <FileText className="w-6 h-6 text-blue-500 mr-4" />
-          <div>
-            <h2 className="text-lg font-semibold">Total Forms</h2>
-            <p className="text-xl font-bold">{analyticsData.totalForms}</p>
+      {!analyticsData ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="flex flex-col justify-center items-center">
+            {/* <Image width={70} height={70} src={"/watermark2.png"} alt="logo" /> */}
+            <span className="loading loading-infinity loading-lg text-primary"></span>
           </div>
         </div>
+      ) : (
+        <div className="flex flex-wrap gap-4 py-4">
+          <div className="border shadow-sm rounded-lg p-6 flex items-center w-full sm:w-1/2 lg:w-1/4">
+            <FileText className="w-6 h-6 text-blue-500 mr-4" />
+            <div>
+              <h2 className="text-lg font-semibold">Total Forms</h2>
+              <p className="text-xl font-bold">{analyticsData.totalForms}</p>
+            </div>
+          </div>
 
-        <div className="border shadow-sm rounded-lg p-6 flex items-center w-full sm:w-1/2 lg:w-1/4">
-          <MessageCircle className="w-6 h-6 text-green-500 mr-4" />
-          <div>
-            <h2 className="text-lg font-semibold">Total Responses</h2>
-            <p className="text-xl font-bold">{analyticsData.totalResponses}</p>
+          <div className="border shadow-sm rounded-lg p-6 flex items-center w-full sm:w-1/2 lg:w-1/4">
+            <MessageCircle className="w-6 h-6 text-green-500 mr-4" />
+            <div>
+              <h2 className="text-lg font-semibold">Total Responses</h2>
+              <p className="text-xl font-bold">
+                {analyticsData.totalResponses}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
