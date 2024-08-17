@@ -22,7 +22,6 @@ import { userResponses } from "@/configs/schema";
 import { toast } from "sonner";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
-import getCurrentUser from "@/lib/getCurrentUser";
 
 type TFormData = {
   [key: string]: any;
