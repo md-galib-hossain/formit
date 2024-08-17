@@ -9,8 +9,6 @@ import { stripe } from "@/lib/getStripe";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
- 
-
 // Helper function to get planId based on plan name
 async function getPlanId(planName: string): Promise<number> {
   const plan = await db
@@ -27,7 +25,10 @@ async function getPlanId(planName: string): Promise<number> {
 
 // Helper function to get periodId based on priceId
 function getPeriodId(priceId: string): number {
-  console.log(`Price ID ${priceId}:`, priceId === process.env.STRIPE_YEARLY_PRICE_ID ? 2 : 1);
+  console.log(
+    `Price ID ${priceId}:`,
+    priceId === process.env.STRIPE_YEARLY_PRICE_ID ? 2 : 1
+  );
   return priceId === process.env.STRIPE_YEARLY_PRICE_ID ? 2 : 1;
 }
 
@@ -36,11 +37,15 @@ export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature")!;
   let event: Stripe.Event;
 
-  console.log(sig)
-  console.log(body)
-  console.log(process.env.STRIPE_WEBHOOK_SECRET!)
+  console.log(sig);
+  console.log(body);
+  console.log(process.env.STRIPE_WEBHOOK_SECRET!);
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
   } catch (err: any) {
     console.error("Webhook signature verification failed.", err.message);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
@@ -50,6 +55,7 @@ export async function POST(req: Request) {
   try {
     switch (event.type) {
       case "checkout.session.completed": {
+        console.log("payment was successful for user");
         const session = await stripe.checkout.sessions.retrieve(
           (event.data.object as Stripe.Checkout.Session).id,
           { expand: ["line_items"] }
@@ -79,6 +85,9 @@ export async function POST(req: Request) {
           for (const item of lineItems) {
             const priceId = item.price?.id;
             const isSubscription = item.price?.type === "recurring";
+            console.log(isSubscription);
+            console.log(item);
+            console.log(session.line_items);
 
             if (isSubscription) {
               let endDate = new Date();
