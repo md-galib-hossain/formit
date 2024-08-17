@@ -1,17 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/configs";
 import { jsonForms, userResponses } from "@/configs/schema";
+import { getUserData } from "@/lib/getCurrentUser";
+import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
+  const user = await getUserData();
+
   try {
+    
     const totalFormsResult = await db
       .select()
       .from(jsonForms)
+      .where(eq(jsonForms.createdBy, user?.email)) 
       .execute();
+
 
     const totalResponsesResult = await db
       .select()
       .from(userResponses)
+      .where(eq(userResponses.createdBy, user?.email)) 
       .execute();
 
     const totalFormsCount = totalFormsResult.length;

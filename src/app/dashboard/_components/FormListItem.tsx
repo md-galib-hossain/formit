@@ -24,14 +24,17 @@ import { TFormItem } from "./FormList";
 
 interface FormListItemProps {
   jsonForm: TJsonForm;
-  formRecord: TFormItem; // Assuming TFormItem is the correct type
+  formRecord: TFormItem;
   refreshData: () => void;
+  setRefetch:any,
+  refetch:boolean
 }
 
 const FormListItem: React.FC<FormListItemProps> = ({
   jsonForm,
   formRecord,
   refreshData,
+  setRefetch,refetch
 }) => {
   const { user } = useUser();
 
@@ -48,6 +51,7 @@ const FormListItem: React.FC<FormListItemProps> = ({
           );
 
         if (result) {
+          setRefetch(!refetch)
           toast.success("Form Deleted!");
           refreshData();
         }

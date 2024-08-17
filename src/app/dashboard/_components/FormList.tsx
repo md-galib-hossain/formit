@@ -19,7 +19,7 @@ export type TFormItem = {
   createdDate: string;
 };
 
-const FormList = () => {
+const FormList = ({setRefetch,refetch}:any) => {
   const { user } = useUser();
   const [formList, setFormList] = useState<TFormItem[]>([]); 
   const [loading, setLoading] = useState(false);
@@ -70,6 +70,8 @@ const FormList = () => {
                 formRecord={form}
                 jsonForm={form.jsonform}
                 refreshData={getFormList}
+                setRefetch={setRefetch}
+                refetch={refetch}
               ></FormListItem>
             </div>
           ))}
