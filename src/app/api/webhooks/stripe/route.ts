@@ -1,5 +1,10 @@
 import { db } from "@/configs";
-import { subscriptions, users, plans, subscriptionPeriods } from "@/configs/schema";
+import {
+  subscriptions,
+  users,
+  plans,
+  subscriptionPeriods,
+} from "@/configs/schema";
 import { stripe } from "@/lib/getStripe";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
@@ -13,14 +18,16 @@ async function getPlanId(planName: string): Promise<number> {
     .from(plans)
     .where(eq(plans.name, planName))
     .execute()
-    .then(result => result[0]);
+    .then((result) => result[0]);
 
   if (!plan) throw new Error(`${planName} plan not found`);
+  console.log(`Plan ${planName}:`, plan.id);
   return plan.id;
 }
 
 // Helper function to get periodId based on priceId
 function getPeriodId(priceId: string): number {
+  console.log(`Price ID ${priceId}:`, priceId === process.env.STRIPE_YEARLY_PRICE_ID ? 2 : 1);
   return priceId === process.env.STRIPE_YEARLY_PRICE_ID ? 2 : 1;
 }
 
@@ -36,6 +43,7 @@ export async function POST(req: Request) {
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
+  console.log("Received event:", event.type);
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -45,6 +53,7 @@ export async function POST(req: Request) {
         );
         const customerId = session.customer as string;
         const customerDetails = session.customer_details;
+        console.log("Customer details:", customerDetails);
 
         if (customerDetails?.email) {
           const [user] = await db
@@ -69,11 +78,11 @@ export async function POST(req: Request) {
             const isSubscription = item.price?.type === "recurring";
 
             if (isSubscription) {
-              const endDate = new Date();
+              let endDate = new Date();
               if (priceId === process.env.STRIPE_YEARLY_PRICE_ID!) {
-                endDate.setFullYear(endDate.getFullYear() + 1);
+                endDate.setFullYear(endDate.getFullYear() + 1); // 1 year from now
               } else if (priceId === process.env.STRIPE_MONTHLY_PRICE_ID!) {
-                endDate.setMonth(endDate.getMonth() + 1);
+                endDate.setMonth(endDate.getMonth() + 1); // 1 month from now
               } else {
                 throw new Error("Invalid priceId");
               }
@@ -83,7 +92,7 @@ export async function POST(req: Request) {
                 .from(subscriptions)
                 .where(eq(subscriptions.userId, user.id))
                 .execute()
-                .then(result => result[0]);
+                .then((result) => result[0]);
 
               if (existingSubscription) {
                 await db
@@ -143,6 +152,7 @@ export async function POST(req: Request) {
           console.error("User not found for the subscription deleted event.");
           throw new Error("User not found for the subscription deleted event.");
         }
+
         break;
       }
 
