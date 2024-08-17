@@ -1,42 +1,34 @@
-import { TJsonForm } from "@/app/edit-form/[formId]/page";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Edit2, Share2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { RWebShare } from "react-web-share";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useUser } from "@clerk/nextjs";
 import { jsonForms } from "@/configs/schema";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/configs";
 import { toast } from "sonner";
 import { TFormItem } from "./FormList";
+import { TJsonForm } from "@/app/edit-form/[formId]/page";
 
 interface FormListItemProps {
+  user: any;
   jsonForm: TJsonForm;
   formRecord: TFormItem;
   refreshData: () => void;
-  setRefetch:any,
-  refetch:boolean
+  setRefetch: any;
+  refetch: boolean;
 }
 
 const FormListItem: React.FC<FormListItemProps> = ({
+  user,
   jsonForm,
   formRecord,
   refreshData,
-  setRefetch,refetch
+  setRefetch,
+  refetch
 }) => {
-  const { user } = useUser();
 
   const onDeleteForm = async () => {
     if (user) {
@@ -46,17 +38,18 @@ const FormListItem: React.FC<FormListItemProps> = ({
           .where(
             and(
               eq(jsonForms.id, formRecord.id!),
-              eq(jsonForms.createdBy, user.primaryEmailAddress?.emailAddress!)
+              eq(jsonForms.createdBy, user.email!)
             )
           );
 
         if (result) {
-          setRefetch(!refetch)
+          setRefetch(!refetch); // Trigger refetch in the parent component
           toast.success("Form Deleted!");
-          refreshData();
+          refreshData(); // Explicitly refresh the data
         }
       } catch (err) {
         console.error("Error while deleting", err);
+        toast.error("Failed to delete form. Please try again.");
       }
     }
   };

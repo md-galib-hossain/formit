@@ -1,7 +1,7 @@
 // api/payments/create-checkout-session/route.ts
  
 // import { stripe } from "@/lib/getStripe";
-import getCurrentUser from "@/lib/getCurrentUser";
+import { getUserData } from "@/lib/getCurrentUser";
 import { stripe } from "@/lib/getStripe";
 // import { stripe } from "@/lib/getStripe";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 // const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!);
 export async function POST(req: NextRequest) {
   const { priceId } = await req.json();
-  const user = await getCurrentUser();
+  const user = await getUserData();
   const userId = user?.id!;
   const email = user?.email!;
   try {

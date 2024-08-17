@@ -13,7 +13,7 @@ const Dashboard = ({ user }: { user: any }) => {
         <CreateForm user={user} setRefetch={setRefetch} refetch={refetch} />
       </div>
       {/* List of forms */}
-      <FormList setRefetch={setRefetch} refetch={refetch}/>
+      <FormList user={user} setRefetch={setRefetch} refetch={refetch}/>
     </div>
   );
 };

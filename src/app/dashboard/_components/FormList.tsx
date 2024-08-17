@@ -19,24 +19,23 @@ export type TFormItem = {
   createdDate: string;
 };
 
-const FormList = ({setRefetch,refetch}:any) => {
-  const { user } = useUser();
+const FormList = ({user,setRefetch,refetch}:any) => {
   const [formList, setFormList] = useState<TFormItem[]>([]); 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    if (user?.primaryEmailAddress?.emailAddress) {
+    if (user?.email) {
       getFormList();
     }
   }, [user]);
 
   const getFormList = async () => {
-    if (user?.primaryEmailAddress?.emailAddress) {
+    if (user?.email) {
       setLoading(true);
       try {
         const result = await db
           .select()
           .from(jsonForms)
-          .where(eq(jsonForms.createdBy, user.primaryEmailAddress.emailAddress))
+          .where(eq(jsonForms.createdBy, user.email))
           .orderBy(desc(jsonForms.id));
 
         // Map the result to parse jsonform to TJsonForm
@@ -67,6 +66,7 @@ const FormList = ({setRefetch,refetch}:any) => {
           {formList?.map((form, index) => (
             <div key={form.id}>
               <FormListItem
+              user={user}
                 formRecord={form}
                 jsonForm={form.jsonform}
                 refreshData={getFormList}

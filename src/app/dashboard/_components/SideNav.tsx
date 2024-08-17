@@ -14,37 +14,36 @@ const SideNav = ({ user }: any) => {
   const [loading, setLoading] = useState(false);
   const [percentageFileCreated, setPercentageFileCreated] = useState(0);
   const [formList, setFormList] = useState<TFormItem[]>([]);
+  const [refetch, setRefetch] = useState(false);
   const path = usePathname();
 
   useEffect(() => {
-    if (user.id) {
+    if (user?.email) {
       getFormList();
     }
-  }, [user.id]);
+  }, [user?.email, refetch]);
 
   const getFormList = async () => {
-    if (user?.email) {
-      setLoading(true);
-      try {
-        const result = await db
-          .select()
-          .from(jsonForms)
-          .where(eq(jsonForms.createdBy, user.email))
-          .orderBy(desc(jsonForms.id));
+    setLoading(true);
+    try {
+      const result = await db
+        .select()
+        .from(jsonForms)
+        .where(eq(jsonForms.createdBy, user.email))
+        .orderBy(desc(jsonForms.id));
 
-        const parsedResult: TFormItem[] = result.map((item: any) => ({
-          ...item,
-          jsonform: JSON.parse(item.jsonform),
-        }));
+      const parsedResult: TFormItem[] = result.map((item: any) => ({
+        ...item,
+        jsonform: JSON.parse(item.jsonform),
+      }));
 
-        setFormList(parsedResult);
-        const perc = (result.length / 3) * 100;
-        setPercentageFileCreated(perc);
-      } catch (error) {
-        console.error("Error fetching form list:", error);
-      } finally {
-        setLoading(false);
-      }
+      setFormList(parsedResult);
+      const perc = (parsedResult.length / 3) * 100;
+      setPercentageFileCreated(perc);
+    } catch (error) {
+      console.error("Error fetching form list:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,7 +69,7 @@ const SideNav = ({ user }: any) => {
             }`}
           >
             <menu.icon className="w-5 h-5" />
-            <span className="">{menu.name}</span>
+            <span>{menu.name}</span>
           </Link>
         ))}
       </div>
@@ -84,10 +83,6 @@ const SideNav = ({ user }: any) => {
         ) : (
           <h2 className="text-sm text-red-600 font-bold">Upgrade your plan for unlimited AI form build</h2>
         )}
-
-        <Button className="w-full mt-3" disabled={isFormCreationDisabled}>
-          + Create Form
-        </Button>
 
         {!isPremiumValid && (
           <div className="my-7">
