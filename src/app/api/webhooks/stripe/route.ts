@@ -33,7 +33,7 @@ function getPeriodId(priceId: string): number {
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const sig = req.headers.get("Stripe-Signature")!;
+  const sig = req.headers.get("stripe-signature")!;
   let event: Stripe.Event;
 
   console.log(sig)
