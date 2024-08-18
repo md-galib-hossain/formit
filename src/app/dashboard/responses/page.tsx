@@ -59,7 +59,11 @@ const Responses = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {!formList.length && (
+            <p className="text-gray-600">There is no response</p>
+          )}
+
           {formList?.map((form: TRecord, index: number) => (
             <FormListItemResponse
               jsonForm={JSON.stringify(form.jsonform)}

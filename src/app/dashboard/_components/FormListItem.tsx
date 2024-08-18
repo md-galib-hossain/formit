@@ -3,14 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Edit2, Share2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { RWebShare } from "react-web-share";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useUser } from "@clerk/nextjs";
-import { jsonForms } from "@/configs/schema";
-import { and, eq } from "drizzle-orm";
-import { db } from "@/configs";
-import { toast } from "sonner";
 import { TFormItem } from "./FormList";
 import { TJsonForm } from "@/app/edit-form/[formId]/page";
+import { toast } from "sonner";
 
 interface FormListItemProps {
   user: any;
@@ -27,32 +34,35 @@ const FormListItem: React.FC<FormListItemProps> = ({
   formRecord,
   refreshData,
   setRefetch,
-  refetch
+  refetch,
 }) => {
-
   const onDeleteForm = async () => {
     if (user) {
       try {
-        const result = await db
-          .delete(jsonForms)
-          .where(
-            and(
-              eq(jsonForms.id, formRecord.id!),
-              eq(jsonForms.createdBy, user.email!)
-            )
-          );
-
-        if (result) {
-          setRefetch(!refetch); // Trigger refetch in the parent component
-          toast.success("Form Deleted!");
-          refreshData(); // Explicitly refresh the data
+        const response = await fetch(`/api/forms/delete/${formRecord.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: user.email }), 
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to delete form");
         }
-      } catch (err) {
-        console.error("Error while deleting", err);
+  
+        const result = await response.json();
+        toast.success(result.message);
+  
+        setRefetch(!refetch);
+        refreshData();
+      } catch (error) {
+        console.error("Error while deleting", error);
         toast.error("Failed to delete form. Please try again.");
       }
     }
   };
+  
 
   return (
     <div className="border shadow-sm rounded-lg p-4 flex flex-col justify-between min-h-[200px]">
@@ -61,14 +71,14 @@ const FormListItem: React.FC<FormListItemProps> = ({
           <div></div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Trash2 className="hover:scale-105 transition-all h-5 w-5 cursor-pointer text-red-500"/>
+              <Trash2 className="hover:scale-105 transition-all h-5 w-5 cursor-pointer text-red-500" />
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete your
-                  form.
+                  form & it's responses.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -80,7 +90,9 @@ const FormListItem: React.FC<FormListItemProps> = ({
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <h2 className="text-lg text-black truncate font-semibold" title={jsonForm.formTitle}>{jsonForm.formTitle}</h2>
+        <h2 className="text-lg text-black truncate font-semibold" title={jsonForm.formTitle}>
+          {jsonForm.formTitle}
+        </h2>
         <h3 className="text-sm text-gray-500">{jsonForm.formSubHeading}</h3>
       </div>
       <div>

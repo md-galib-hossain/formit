@@ -63,6 +63,7 @@ const FormList = ({user,setRefetch,refetch}:any) => {
         </div>
       ) : (
         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          {!formList.length && <p className="text-gray-600">There is no form</p>}
           {formList?.map((form, index) => (
             <div key={form.id}>
               <FormListItem
