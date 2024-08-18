@@ -25,7 +25,7 @@ const LayoutClient = ({ user, children }: { user: UserType; children: ReactNode 
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <div className="w-64 bg-white shadow-md h-full">
+          <div className="w-64 bg-white shadow-md">
             <SideNav user={user} />
           </div>
         </div>

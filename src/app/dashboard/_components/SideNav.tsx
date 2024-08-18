@@ -58,46 +58,49 @@ const SideNav = ({ user }: any) => {
   const isPremiumValid = user.isPremium && new Date(user.expiryDate) > new Date();
 
   return (
-    <div className="h-screen shadow-md border bg-white flex flex-col">
-      <div className="p-5 flex-grow overflow-y-auto">
-        {menuList.map((menu) => (
-          <Link
-            href={menu.path}
-            key={menu.id}
-            className={`flex items-center gap-3 p-4 mb-3 hover:bg-primary hover:text-white rounded-lg cursor-pointer text-gray-500 ${
-              path === menu.path ? "bg-primary text-white" : ""
-            }`}
-          >
-            <menu.icon className="w-5 h-5" />
-            <span>{menu.name}</span>
-          </Link>
-        ))}
-      </div>
+   <div className="fixed top-0 left-0 h-screen shadow-md border bg-white flex flex-col w-full md:w-64">
+  <div className="p-5 flex-grow overflow-y-auto">
+    {menuList.map((menu) => (
+      <Link
+        href={menu.path}
+        key={menu.id}
+        className={`flex items-center gap-3 p-4 mb-3 hover:bg-primary hover:text-white rounded-lg cursor-pointer text-gray-500 ${
+          path === menu.path ? "bg-primary text-white" : ""
+        }`}
+      >
+        <menu.icon className="w-5 h-5" />
+        <span>{menu.name}</span>
+      </Link>
+    ))}
+  </div>
 
-      <div className="p-6 w-full md:w-64">
-        {user.isPremium ? (
-          <>
-            <h2 className="text-sm text-primary font-bold">You are a premium user</h2>
-            <h3 className="text-sm text-gray-600">Expiry Date: {new Date(user.expiryDate).toLocaleDateString()}</h3>
-          </>
+  <div className="p-6">
+    {user.isPremium ? (
+      <>
+        <h2 className="text-sm text-primary font-bold">You are a premium user</h2>
+        <h3 className="text-sm text-gray-600">
+          Expiry Date: {new Date(user.expiryDate).toLocaleDateString()}
+        </h3>
+      </>
+    ) : (
+      <h2 className="text-sm text-red-600 font-bold">Upgrade your plan for unlimited AI form build</h2>
+    )}
+
+    {!isPremiumValid && (
+      <div className="my-7">
+        {loading ? (
+          <Progress hidden />
         ) : (
-          <h2 className="text-sm text-red-600 font-bold">Upgrade your plan for unlimited AI form build</h2>
+          <Progress value={percentageFileCreated} />
         )}
-
-        {!isPremiumValid && (
-          <div className="my-7">
-            {loading ? (
-              <Progress hidden />
-            ) : (
-              <Progress value={percentageFileCreated} />
-            )}
-            <h2 className="text-sm mt-2 text-gray-600">
-              <strong>{formList.length}</strong> Out of <strong>3</strong> Files Created
-            </h2>
-          </div>
-        )}
+        <h2 className="text-sm mt-2 text-gray-600">
+          <strong>{formList.length}</strong> Out of <strong>3</strong> Files Created
+        </h2>
       </div>
-    </div>
+    )}
+  </div>
+</div>
+
   );
 };
 

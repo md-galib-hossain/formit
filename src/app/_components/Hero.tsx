@@ -15,14 +15,14 @@ const Hero = () => {
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a
-              className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-white shadow hover:bg-primary focus:outline-none focus:ring active:bg-primary sm:w-auto"
+              className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-white shadow hover:bg-customHover focus:outline-none focus:ring active:bg-primary sm:w-auto"
               href="#"
             >
               + Create form
             </a>
 
             <a
-              className="block w-full rounded border border-primary px-12 py-3 text-sm font-medium text-primary shadow hover:bg-blue-50 focus:outline-none focus:ring active:bg-blue-100 sm:w-auto"
+              className="block w-full rounded border border-primary px-12 py-3 text-sm font-medium text-primary shadow hover:bg-green-50 focus:outline-none focus:ring active:bg-blue-100 sm:w-auto"
               href="#"
             >
               Learn More

@@ -77,7 +77,7 @@ const Upgrade = () => {
               </ul>
             </div>
             <Button
-              disabled={user?.subscriptionType === item.duration || loading[item.priceId]}
+              disabled={user?.subscriptionType === item.duration || user?.subscriptionType === "Yearly"||loading[item.priceId]}
               onClick={() => handleStripe(item.priceId)}
               className={`mt-8 rounded-full border w-full text-center text-sm font-medium text-white ${
                 loading[item.priceId]
@@ -92,6 +92,8 @@ const Upgrade = () => {
     ? "Already Subscribed"
     : user?.subscriptionType === "Monthly" && item.duration === "Yearly"
     ? "Upgrade"
+     : user?.subscriptionType === "Yearly" && item.duration === "Monthly"
+    ? "Already Subscribed"
     : user?.subscriptionType === item.duration
     ? "Already Subscribed"
     : "Get Started"
