@@ -5,10 +5,13 @@ import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
 import axios from "axios";
 import { useState } from "react";
+import { useContextUser } from "@/lib/UserContext";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_API_KEY!);
 
 const Upgrade = () => {
+  const user = useContextUser()
+  console.log(user)
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
 
   const handleStripe = async (priceId: string) => {
@@ -64,7 +67,7 @@ const Upgrade = () => {
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="currentColor"
-                      className={`w-5 h-5 ${feature.available ? 'text-indigo-700' : 'text-gray-400'}`}
+                      className={`w-5 h-5 ${feature.available ? 'text-primary' : 'text-gray-400'}`}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
@@ -74,15 +77,25 @@ const Upgrade = () => {
               </ul>
             </div>
             <Button
-              disabled={loading[item.priceId]}
+              disabled={user?.subscriptionType === item.duration || loading[item.priceId]}
               onClick={() => handleStripe(item.priceId)}
               className={`mt-8 rounded-full border w-full text-center text-sm font-medium text-white ${
                 loading[item.priceId]
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "border-primary bg-white text-primary hover:ring-1 hover:ring-primary"
+                  : "border-primary bg-white text-primary hover:ring-1 hover:ring-primary hover:text-white"
               }`}
             >
-              {loading[item.priceId] ? "Proceeding..." : "Get Started"}
+            {
+  loading[item.priceId]
+    ? "Proceeding..."
+    : user?.subscriptionType === "Monthly" && item.duration === "Monthly"
+    ? "Already Subscribed"
+    : user?.subscriptionType === "Monthly" && item.duration === "Yearly"
+    ? "Upgrade"
+    : user?.subscriptionType === item.duration
+    ? "Already Subscribed"
+    : "Get Started"
+}
             </Button>
           </div>
         ))}

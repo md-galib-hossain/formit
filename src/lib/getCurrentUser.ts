@@ -4,17 +4,14 @@ import { users, subscriptions } from "@/configs/schema";
 import { eq } from "drizzle-orm";
 
 export async function getUserData() {
-  // Fetch the current user from Clerk
   const user = await currentUser();
 
   if (!user) {
     throw new Error("User not found");
   }
 
-  // Get the user's email
   const userEmail = user.emailAddresses[0].emailAddress;
 
-  // Query the users collection to find the userId using the email
   const dbUser = await db
     .select({ id: users.id })
     .from(users)
@@ -28,7 +25,6 @@ export async function getUserData() {
 
   const userId = dbUser.id;
 
-  // Fetch the user's subscription based on userId
   const subscription = await db
     .select()
     .from(subscriptions)
@@ -38,6 +34,7 @@ export async function getUserData() {
 
   let isPremium = false;
   let expiryDate = null;
+  let subscriptionType: "Monthly" | "Yearly" | null = null;
 
   if (subscription) {
     const today = new Date();
@@ -47,6 +44,14 @@ export async function getUserData() {
     if (today >= startDate && today <= endDate) {
       isPremium = true;
       expiryDate = endDate;
+
+      const durationInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+      if (durationInDays <= 31) {
+        subscriptionType = "Monthly";
+      } else {
+        subscriptionType = "Yearly";
+      }
     }
   }
 
@@ -58,5 +63,6 @@ export async function getUserData() {
     lastName: user.lastName,
     isPremium,
     expiryDate,
+    subscriptionType,
   };
 }
